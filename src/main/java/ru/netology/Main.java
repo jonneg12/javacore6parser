@@ -1,10 +1,14 @@
 package ru.netology;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.*;
 import lombok.SneakyThrows;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.*;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.*;
 import java.io.*;
@@ -40,53 +44,81 @@ public class Main {
 
         // write json string to file data2.json
         writeJsonToFile(jsonString2, jsonFileName2);
+
+        //task *
+        String json = readString(jsonFileName);
+
+        List<Employee> EmployeeList = jsonToList(json);
+
+        for (Employee employee : EmployeeList) {
+            System.out.println(employee);
+        }
+    }
+
+    @SneakyThrows
+    private static List<Employee> jsonToList(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, new TypeToken<List<Employee>>(){}.getType());
+    }
+
+    private static String readString(String fileName) {
+        StringBuilder result = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                result.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
     }
 
     @SneakyThrows
     private static List<Employee> parseXML(String xmlFileName) {
         List<Employee> employeeList = new ArrayList<>();
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File(xmlFileName));
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new File(xmlFileName));
 
-        NodeList employeeNodeList = doc.getElementsByTagName("employee");
+            NodeList employeeNodeList = doc.getElementsByTagName("employee");
 
-        for (int i = 0; i < employeeNodeList.getLength(); i++) {
-            if (employeeNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                Element employeeElement = (Element)employeeNodeList.item(i);
-                Employee employee = new Employee();
-                NodeList childNodes = employeeElement.getChildNodes();
-                for (int j = 0; j < childNodes.getLength(); j++) {
-                    if (childNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-                        Element childElement = (Element)childNodes.item(j);
-                        switch (childElement.getNodeName()) {
-                            case "id": {
-                                employee.setId(Long.valueOf(childElement.getTextContent()));
-                                break;
-                            }
-                            case "firstName": {
-                                employee.setFirstName(childElement.getTextContent());
-                                break;
-                            }
-                            case "lastName": {
-                                employee.setLastName(childElement.getTextContent());
-                                break;
-                            }
-                            case "country": {
-                                employee.setCountry(childElement.getTextContent());
-                                break;
-                            }
-                            case "age": {
-                                employee.setAge(Integer.parseInt(childElement.getTextContent()));
-                                break;
+            for (int i = 0; i < employeeNodeList.getLength(); i++) {
+                if (employeeNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    Element employeeElement = (Element)employeeNodeList.item(i);
+                    Employee employee = new Employee();
+                    NodeList childNodes = employeeElement.getChildNodes();
+                    for (int j = 0; j < childNodes.getLength(); j++) {
+                        if (childNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
+                            Element childElement = (Element)childNodes.item(j);
+                            switch (childElement.getNodeName()) {
+                                case "id": {
+                                    employee.setId(Long.valueOf(childElement.getTextContent()));
+                                    break;
+                                }
+                                case "firstName": {
+                                    employee.setFirstName(childElement.getTextContent());
+                                    break;
+                                }
+                                case "lastName": {
+                                    employee.setLastName(childElement.getTextContent());
+                                    break;
+                                }
+                                case "country": {
+                                    employee.setCountry(childElement.getTextContent());
+                                    break;
+                                }
+                                case "age": {
+                                    employee.setAge(Integer.parseInt(childElement.getTextContent()));
+                                    break;
+                                }
                             }
                         }
                     }
+                    employeeList.add(employee);
                 }
-                employeeList.add(employee);
             }
-        }
         return employeeList;
     }
 

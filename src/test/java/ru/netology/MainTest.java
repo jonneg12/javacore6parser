@@ -105,7 +105,7 @@ class MainTest {
     }
 
     @Test
-    void parseCSVTrue(){
+    void testParseCSVTrue(){
 
         String testFileName = "src//test//resources//testdata.csv";
         String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};

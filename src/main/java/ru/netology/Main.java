@@ -5,10 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.*;
 import lombok.SneakyThrows;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.*;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.*;
 import java.io.*;
@@ -56,12 +53,12 @@ public class Main {
     }
 
     @SneakyThrows
-    private static List<Employee> jsonToList(String json) {
+    protected static List<Employee> jsonToList(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<Employee>>(){}.getType());
     }
 
-    private static String readString(String fileName) {
+    protected static String readString(String fileName) {
         StringBuilder result = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -75,7 +72,7 @@ public class Main {
     }
 
     @SneakyThrows
-    private static List<Employee> parseXML(String xmlFileName) {
+    protected static List<Employee> parseXML(String xmlFileName) {
         List<Employee> employeeList = new ArrayList<>();
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -122,7 +119,7 @@ public class Main {
         return employeeList;
     }
 
-    private static void writeJsonToFile(String jsonString, String jsonFileName) {
+    protected static void writeJsonToFile(String jsonString, String jsonFileName) {
         try (FileWriter fw = new FileWriter(jsonFileName)) {
             fw.write(jsonString);
             fw.flush();
@@ -131,7 +128,7 @@ public class Main {
         }
     }
 
-    private static String listToJson(List<Employee> employeeList) {
+    protected static String listToJson(List<Employee> employeeList) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder
                 .setPrettyPrinting()
@@ -140,7 +137,7 @@ public class Main {
         return json;
     }
 
-    private static List<Employee> parseCSV(String[] columnMapping, String fileName) {
+    protected static List<Employee> parseCSV(String[] columnMapping, String fileName) {
 
         List<Employee> employeeList = new ArrayList<>();
 
